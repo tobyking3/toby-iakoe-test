@@ -1,0 +1,15 @@
+.product-bundle {
+  
+}
+
+.product-bundle .product-bundle__title {
+
+}
+
+.product-bundle .product-bundle__grid {
+  display: flex;
+}
+
+.product-bundle-item {
+  flex: 1;
+}

@@ -1,0 +1,102 @@
+{% comment %}
+  Renders product bundle
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  - update_url: {Boolean} whether or not to update url when changing variants. If false, the url isn't updated. Default: true (optional).
+  Usage:
+  {% render 'product-bundle', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+
+{% assign second_product = product.metafields.product_bundle.product.value %}
+
+{% if second_product != blank and second_product.available == true %}
+    <div class="product-bundle">
+        
+        {%- if block.settings.title != blank -%}
+            <div class="product-bundle__title">
+                <p>{{ block.settings.title }}</p>
+            </div>
+        {%- endif -%}
+
+        <div class="product-bundle__container">
+            <div class="product-bundle__grid">
+                <div class="product-bundle-item product-bundle-item--1">
+                    {% render 'card-product', card_product: product %}
+                </div>
+                <div class="product-bundle-item product-bundle-item--2">
+                    {% render 'card-product', card_product: second_product %}
+                </div>
+            </div>
+            <button id="BundleSubmitButton" type="submit" name="add" class="product-form__submit button button--full-width button--secondary" aria-haspopup="dialog">
+                <span>Frequently bought together</span>
+                <div class="loading-overlay__spinner hidden">
+                  <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                  </svg>
+                </div>
+              </button>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+
+    let formData = {
+    'items': [{
+        'id': {{ product.variants[0].id }},
+        'quantity': 1
+        },
+        {
+        'id': {{ second_product.variants[0].id }},
+        'quantity': 1
+    }]
+    };
+
+
+    
+
+    async function updateCartDrawer () {
+        const res = await fetch("/?section_id=cart-drawer");
+        const text = await res.text();
+
+        const drawerMarkup = document.createElement("div");
+        drawerMarkup.innerHTML = text;
+
+
+        const newDrawer = drawerMarkup.querySelector('.cart-drawer').innerHTML;
+
+
+        console.log(newDrawer);
+
+        document.querySelector('.cart-drawer').innerHTML = newDrawer;
+    }
+
+
+
+
+    document.querySelector('#BundleSubmitButton').addEventListener("click", () => {
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            return response.json();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+        updateCartDrawer();
+
+        document.querySelector('cart-drawer').classList.add('animate','active');
+
+
+    });
+
+</script>
