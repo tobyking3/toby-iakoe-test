@@ -31,7 +31,7 @@
               <button
                 class="drawer__close"
                 type="button"
-                onclick="this.closest('cart-drawer').close()"
+                onclick="this.closest('cart-drawer').close();"
                 aria-label="{{ 'accessibility.close' | t }}"
               >
                 {% render 'icon-close' %}
@@ -60,7 +60,7 @@
         <button
           class="drawer__close"
           type="button"
-          onclick="this.closest('cart-drawer').close()"
+          onclick="this.closest('cart-drawer').close();"
           aria-label="{{ 'accessibility.close' | t }}"
         >
           {% render 'icon-close' %}
@@ -453,4 +453,5 @@
       document.querySelector('#cart').submit();
     });
   });
+  }
 </script>
